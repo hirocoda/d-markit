@@ -8,11 +8,11 @@ function AuthButtons() {
   return (
     <ButtonGroup>
       {not_mobile && (
-        <Button size="sm" rounded="full" variant={'ghost'}>
+        <Button size={['xs', 'sm']} rounded="full" variant={'ghost'}>
           <Link to="/login">Login</Link>
         </Button>
       )}
-      <Button size="sm" rounded="full" colorScheme={'purple'}>
+      <Button size={['xs', 'sm']} rounded="full" colorScheme={'purple'}>
         <Link to="/signup">Signup</Link>
       </Button>
     </ButtonGroup>

@@ -56,7 +56,7 @@ function Header() {
                   </HStack>
                 )}
               </HStack>
-              <HStack spacing={'2'}>
+              <HStack spacing={'1'}>
                 <AuthButtons />
 
                 {mobile && (
@@ -68,11 +68,11 @@ function Header() {
                         size="sm"
                         rounded="sm"
                         variant="flushed"
-                        fontSize="26px"
+                        fontSize="22px"
                         rightIcon={<HiMenuAlt3 />}
                       />
                       <MenuList>
-                        <MenuItem p="0">
+                        <MenuItem p="0" fontSize={['sm', 'md']}>
                           <Link
                             style={{
                               padding: '8px 10px',
@@ -86,7 +86,7 @@ function Header() {
                         </MenuItem>
 
                         {nav.map((n, i) => (
-                          <MenuItem p="0" key={i}>
+                          <MenuItem p="0" key={i} fontSize={['sm', 'md']}>
                             <Link
                               style={{
                                 padding: '8px 10px',

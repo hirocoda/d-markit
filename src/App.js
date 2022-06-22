@@ -13,6 +13,7 @@ import ProductPage from './components/Product/ProductPage';
 import Item from './pages/Item';
 import AuthProvider from './context/AuthContext';
 import DataProvider from './context/DataContext';
+import Profile from './pages/Profile';
 
 const customTheme = extendTheme({
   colors: {
@@ -31,12 +32,16 @@ function App() {
     <ChakraProvider theme={customTheme}>
       <AuthProvider>
         <DataProvider>
-          <Box bg="#f3f3f3" minH="100vh">
+          <Box //bg="#f3f3f3"
+            bg="white"
+            minH="100vh"
+          >
             <BrowserRouter>
               <ScrollToTop>
                 <Header />
                 <Routes>
                   <Route path="/" element={<Home />} />
+                  <Route path="/profile" element={<Profile />} />
                   <Route path="/marketplace" element={<MarketPlace />} />
                   <Route path="/item/:id" element={<Item />} />
                   <Route path="/category/:category" element={<ProductPage />} />

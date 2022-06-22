@@ -1,7 +1,7 @@
 import {
   Box,
-  Button,
   HStack,
+  IconButton,
   Menu,
   MenuButton,
   MenuItem,
@@ -63,13 +63,17 @@ function Header() {
                   <>
                     <Menu>
                       <MenuButton
-                        as={Button}
+                        as={IconButton}
                         px="0"
                         size="sm"
                         rounded="sm"
                         variant="flushed"
                         fontSize="22px"
-                        rightIcon={<HiMenuAlt3 />}
+                        icon={<HiMenuAlt3 />}
+                        _focus={{
+                          boxShadow: 'none',
+                          bg: 'gray.50',
+                        }}
                       />
                       <MenuList>
                         <MenuItem p="0" fontSize={['sm', 'md']}>

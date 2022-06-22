@@ -16,7 +16,7 @@ function Header() {
   const inputRef = React.useRef();
 
   return (
-    <Box mt="-60px" bg="brand.500" color="gray.100" pt="130px" h="65vh">
+    <Box mt="-60px" bg="brand.500" color="gray.100" pt="130px" h="450px">
       <WrapContent>
         <Center flexDir={'column'} h="full" py="10" as="form">
           <Heading as="h1" fontSize={'24px'}>

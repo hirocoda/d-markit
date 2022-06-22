@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import appScreen from '../../assets/screen.png';
 
 function Hero() {
   return (
@@ -165,7 +166,7 @@ function Hero() {
           w="full"
           rounded="lg"
           shadow="2xl"
-          src="https://kutty.netlify.app/hero.jpg"
+          src={appScreen}
           alt="software screenshot"
         />
       </Box>

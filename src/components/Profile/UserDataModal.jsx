@@ -12,18 +12,70 @@ import {
   Input,
   Box,
 } from '@chakra-ui/react';
-import React from 'react';
+import { setDoc, Timestamp, doc, updateDoc } from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { db } from '../../firebase';
 
-export default function UserDataModal({ isOpen, onClose }) {
+export default function UserDataModal({ isOpen, onClose, action }) {
   const initialRef = React.useRef(null);
-  const { userData } = useAuth();
+  const { userData, isAuth, getUserData } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const [name, setName] = React.useState(userData ? userData.name : '');
   const [contact, setContact] = React.useState(
     userData ? userData.contact : ''
   );
   const [avatar, setAvatar] = React.useState(userData ? userData.avatar : '');
+
+  const handleSubmit = async e => {
+    setLoading(true);
+    e.preventDefault();
+    try {
+      await setDoc(doc(db, 'users', isAuth), {
+        name,
+
+        contact,
+        created: Timestamp.now(),
+        avatar:
+          avatar.trim.length === 0
+            ? 'https://source.unsplash.com/random/?portrait'
+            : avatar,
+      });
+      setLoading(false);
+
+      onClose();
+      getUserData();
+    } catch (err) {
+      alert(err);
+    }
+  };
+  const handleUpdate = async e => {
+    setLoading(true);
+    e.preventDefault();
+    try {
+      await updateDoc(doc(db, 'users', isAuth), {
+        name,
+
+        contact,
+        avatar,
+      });
+      setLoading(false);
+
+      onClose();
+      getUserData();
+    } catch (err) {
+      alert(err);
+    }
+  };
+  useEffect(() => {
+    if (action === 'EDIT') {
+      setAvatar(userData.avatar);
+      setName(userData.name);
+      setContact(userData.contact);
+    }
+    //eslint-disable-next-line
+  }, [action]);
 
   return (
     <>
@@ -33,7 +85,18 @@ export default function UserDataModal({ isOpen, onClose }) {
           <ModalHeader>Create your account</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <Box as="form" id="userForm">
+            <Box
+              as="form"
+              id="userForm"
+              onSubmit={e => {
+                if (action === 'ADD') {
+                  handleSubmit(e);
+                }
+                if (action === 'EDIT') {
+                  handleUpdate(e);
+                }
+              }}
+            >
               <FormControl isRequired>
                 <FormLabel>Full Name</FormLabel>
                 <Input
@@ -66,7 +129,13 @@ export default function UserDataModal({ isOpen, onClose }) {
           </ModalBody>
 
           <ModalFooter>
-            <Button form="userForm" type="submit" colorScheme="blue" mr={3}>
+            <Button
+              isLoading={loading}
+              form="userForm"
+              type="submit"
+              colorScheme="blue"
+              mr={3}
+            >
               Save
             </Button>
             <Button onClick={onClose}>Cancel</Button>

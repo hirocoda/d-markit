@@ -3,12 +3,14 @@ import {
   Box,
   Button,
   HStack,
+  Icon,
   Image,
   Stack,
   Text,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { FaLocationArrow } from 'react-icons/fa';
+import { FcCompactCamera, FcChargeBattery } from 'react-icons/fc';
 import { Link } from 'react-router-dom';
 import { useData } from '../../context/DataContext';
 
@@ -22,40 +24,54 @@ function AdCard({ item }) {
       bg="white"
       as={Link}
       to={'/item/' + item.id}
-      rounded="lg"
-      shadow="base"
     >
-      <HStack h="200px">
+      <HStack h="200px" shadow="base" rounded="lg">
         <Box w="40%" bg={!loaded && 'gray.200'} h="100%">
           <Image
             roundedLeft={'lg'}
             onLoad={() => setLoaded(true)}
-            alt={item.name + ' ' + item.id}
+            alt={item.model + ' ' + item.id}
             src={item.image}
             w="100%"
             h="100%"
             objectFit={'cover'}
           />
         </Box>
-        <Stack justifyContent={'space-between'} p="4" w="60%" h="100%">
-          <Text className="poppins" fontSize={'xl'}>
-            {item.name}
+        <Stack p="3" w="60%" h="100%">
+          <Text className="poppins" fontSize={'lg'}>
+            {item.brand + ' ' + item.model}
           </Text>
+          <Box fontSize="11px" lineHeight={'1'}>
+            <HStack alignItems={'flex-start'}>
+              <Box>
+                <Icon as={FcChargeBattery} />
+              </Box>
+              <Text as="small">{item.battery}</Text>
+            </HStack>
+            <HStack alignItems={'flex-start'}>
+              <Box>
+                <Icon as={FcCompactCamera} />
+              </Box>
+              <Text as="small">{item.camera}</Text>
+            </HStack>
+          </Box>
           <Box
             className="poppins"
             textDecoration={'underline'}
             textUnderlineOffset="4px"
+            fontSize={'14px'}
           >
-            {item.price + ' ' + item.currency}
+            {item.price + ' TRX'}
           </Box>
           <Box>
-            {item.tags.map((t, i) => (
+            {item.tagList.map((t, i) => (
               <Badge
                 my="1"
                 mr="1"
                 colorScheme={'green'}
                 className="raleway"
                 key={i}
+                fontSize="10px"
               >
                 {t}
               </Badge>

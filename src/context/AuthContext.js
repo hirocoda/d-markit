@@ -1,6 +1,8 @@
 import { useToast } from '@chakra-ui/react';
 import { ethers } from 'ethers';
+import { doc, getDoc } from 'firebase/firestore';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { db } from '../firebase';
 
 const AuthContext = React.createContext({});
 
@@ -9,6 +11,7 @@ export const useAuth = () => {
 };
 const AuthProvider = ({ children }) => {
   const [isAuth, setAuth] = useState(false);
+  const [loadData, setLoadData] = useState(true);
   const [userData, setUserData] = useState(null);
   const toast = useToast();
   let _PROVIDER = useRef(null);
@@ -43,6 +46,7 @@ const AuthProvider = ({ children }) => {
         let accounts = await _PROVIDER.current.send('eth_requestAccounts', []);
         _SIGNER.current = _PROVIDER.current.getSigner();
         setAuth(accounts[0]);
+        getUserData(accounts[0]);
       } else {
         console.log(net);
         toast({
@@ -63,6 +67,21 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  async function getUserData(id = isAuth) {
+    setLoadData(true);
+    const docRef = doc(db, 'users', id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      setUserData({ ...docSnap.data(), id: docSnap.id, ads: [] });
+      setLoadData(false);
+    } else {
+      // doc.data() will be undefined in this case
+      console.log('No such document!');
+      setLoadData(false);
+    }
+  }
+
   const dispatchAuthAction = (actionType, payload) => {
     switch (actionType) {
       case 'SET_AUTH':
@@ -77,7 +96,7 @@ const AuthProvider = ({ children }) => {
         !isAuth && connect();
         return;
       case 'SET_USER_DATA':
-        setUserData({});
+        getUserData();
         return;
 
       default:
@@ -91,7 +110,15 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuth, _PROVIDER, _SIGNER, userData, dispatchAuthAction }}
+      value={{
+        isAuth,
+        _PROVIDER,
+        _SIGNER,
+        loadData,
+        userData,
+        dispatchAuthAction,
+        getUserData,
+      }}
     >
       {children}
     </AuthContext.Provider>

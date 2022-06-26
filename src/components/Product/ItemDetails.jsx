@@ -1,18 +1,47 @@
-import { Avatar, Badge, Box, Button, HStack, Text } from '@chakra-ui/react';
+import {
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  HStack,
+  Icon,
+  Text,
+} from '@chakra-ui/react';
 import 'react-image-lightbox/style.css';
 import React from 'react';
-import { FaPhoneAlt } from 'react-icons/fa';
+import { FaMemory, FaPhoneAlt } from 'react-icons/fa';
+import { FcChargeBattery, FcCompactCamera } from 'react-icons/fc';
 
 function ItemDetails({ item }) {
   return (
     <>
       <Box>
-        <Text className="raleway" as="h2" fontSize={['24px', '32px']}>
+        <Text className="raleway" as="h2" fontSize={['20px', '28px']}>
           {item.price + ' ' + item.currency}
         </Text>
         <Text className="poppins" as="h2" fontSize={['22px', '30px']}>
-          {item.name}
+          {item.brand + ' ' + item.model}
         </Text>
+        <Box fontSize="15px" py="4">
+          <HStack alignItems={'flex-start'}>
+            <Box>
+              <Icon as={FcChargeBattery} />
+            </Box>
+            <Text as="small">{item.battery}</Text>
+          </HStack>
+          <HStack alignItems={'flex-start'}>
+            <Box>
+              <Icon as={FcCompactCamera} />
+            </Box>
+            <Text as="small">{item.camera}</Text>
+          </HStack>
+          <HStack alignItems={'flex-start'}>
+            <Box>
+              <Icon as={FaMemory} />
+            </Box>
+            <Text as="small">{item.ram} RAM</Text>
+          </HStack>
+        </Box>
         <HStack justifyContent={'space-between'}>
           <HStack py="2">
             <Avatar size="sm" name={item.user.name} />
@@ -35,6 +64,9 @@ function ItemDetails({ item }) {
         <b style={{ fontFamily: 'inherit' }}>Brand</b>: {item.brand}
       </Text>
       <Text fontSize={['14px', 'sm']} className="raleway">
+        <b style={{ fontFamily: 'inherit' }}>Model</b>: {item.model}
+      </Text>
+      <Text fontSize={['14px', 'sm']} className="raleway">
         <b style={{ fontFamily: 'inherit' }}>Color</b> :{' '}
         <Badge colorScheme={item.color || 'red'}>{item.color || 'red'}</Badge>
       </Text>
@@ -42,7 +74,7 @@ function ItemDetails({ item }) {
         <Text fontSize={['14px', 'sm']} className="raleway">
           <b style={{ fontFamily: 'inherit' }}>Condition</b> :
         </Text>{' '}
-        {item.tags.map((t, i) => (
+        {item.tagList.map((t, i) => (
           <Badge
             my="1"
             mr="1"

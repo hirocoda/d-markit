@@ -4,9 +4,9 @@ import { useAuth } from '../../context/AuthContext';
 
 function PayNow({ item }) {
   const toast = useToast();
-  const { user } = useAuth();
+  const { userData } = useAuth();
   const handlepay = () => {
-    if (!user) {
+    if (!userData) {
       toast({
         position: 'bottom-right',
         status: 'error',

@@ -29,12 +29,6 @@ const ProfileData = ({ isAuth, data }) => {
             </Text>
             <Text>{data ? data.contact : 'Contact not set'}</Text>
           </Box>
-          <Box>
-            <Text as="b" fontSize="sm" color="gray.600" className="raleway">
-              Avatar :
-            </Text>
-            <Text>{data ? data.avatar : 'avatr not set'}</Text>
-          </Box>
         </Stack>
       </WrapContent>
     </Box>

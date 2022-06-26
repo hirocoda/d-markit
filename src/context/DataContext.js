@@ -1,5 +1,9 @@
-import React, { useState } from 'react';
-import { categories as fakeCat } from '../data/fakedata';
+import React, { useEffect, useState } from 'react';
+// import { categories as fakeCat } from '../data/fakedata';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../firebase';
+import { useAuth } from './AuthContext';
+
 const DataContext = React.createContext({});
 
 export const useData = () => {
@@ -7,11 +11,14 @@ export const useData = () => {
 };
 const DataProvider = ({ children }) => {
   const [activeItem, setactiveItem] = useState(null);
-  const [categories, setCategories] = useState(fakeCat);
+  const [loadingCats, setLoadingCats] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [ads, setAds] = useState([]);
+  const { isAuth } = useAuth();
 
   const dispatchAction = (actionType, payload) => {
     switch (actionType) {
-      case 'SET_ACTIVE_POST':
+      case 'SET_ACTIVE_ITEM':
         setactiveItem(payload);
         return;
 
@@ -23,9 +30,46 @@ const DataProvider = ({ children }) => {
         return;
     }
   };
+  useEffect(() => {
+    getCategories();
+  }, []);
 
+  async function getCategories() {
+    let arr = [];
+    const querySnapshot = await getDocs(collection(db, 'categories'));
+    querySnapshot.forEach(doc => {
+      arr.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
+    setCategories(arr);
+    setLoadingCats(false);
+  }
+  async function getUserAds() {
+    let arr = [];
+    const q = query(collection(db, 'ads'), where('user.id', '==', isAuth));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(doc => {
+      arr.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
+    setAds(arr);
+    console.log(arr);
+  }
   return (
-    <DataContext.Provider value={{ dispatchAction, activeItem, categories }}>
+    <DataContext.Provider
+      value={{
+        dispatchAction,
+        activeItem,
+        ads,
+        getUserAds,
+        loadingCats,
+        categories,
+      }}
+    >
       {children}
     </DataContext.Provider>
   );

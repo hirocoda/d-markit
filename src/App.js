@@ -9,11 +9,12 @@ import Home from './pages/Home';
 import { extendTheme } from '@chakra-ui/react';
 import MarketPlace from './pages/MarketPlace';
 import Footer from './components/layout/Footer';
-import ProductPage from './components/Product/ProductPage';
+import CategoryProductsPage from './components/Product/CategoryProductsPage';
 import Item from './pages/Item';
 import AuthProvider from './context/AuthContext';
 import DataProvider from './context/DataContext';
 import Profile from './pages/Profile';
+import CreateAd from './pages/CreateAd';
 
 const customTheme = extendTheme({
   colors: {
@@ -42,9 +43,13 @@ function App() {
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/profile" element={<Profile />} />
+                  <Route path="/create_ad" element={<CreateAd />} />
                   <Route path="/marketplace" element={<MarketPlace />} />
                   <Route path="/item/:id" element={<Item />} />
-                  <Route path="/category/:category" element={<ProductPage />} />
+                  <Route
+                    path="/category/:category"
+                    element={<CategoryProductsPage />}
+                  />
                 </Routes>
                 <Footer />
               </ScrollToTop>

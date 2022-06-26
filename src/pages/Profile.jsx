@@ -10,19 +10,30 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import WrapContent from '../components/layout/WrapContent';
 import metamask from '../assets/metamask.png';
 import { useAuth } from '../context/AuthContext';
-import ProfileData from '../components/Profile/ProfileData';
+// import ProfileData from '../components/Profile/ProfileData';
 import pheader from '../assets/pheader.svg';
 import UserDataModal from '../components/Profile/UserDataModal';
 import AdsSection from '../components/Profile/AdsSection';
+import { useData } from '../context/DataContext';
 
 function Profile() {
   //eslint-disable-next-line
   const { isAuth, userData } = useAuth();
+  const { getUserAds, ads } = useData();
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const [action, setAction] = useState('ADD');
+
+  useEffect(() => {
+    if (isAuth) {
+      getUserAds();
+    }
+    //eslint-disable-next-line
+  }, [isAuth]);
+
   return (
     <>
       {!isAuth && (
@@ -57,7 +68,11 @@ function Profile() {
                   <HStack spacing={4} alignItems="flex-end">
                     <Avatar
                       border="5px solid #EDF2F7"
-                      src="https://source.unsplash.com/random/?portrait"
+                      src={
+                        userData
+                          ? userData.avatar
+                          : 'https://source.unsplash.com/random/?portrait'
+                      }
                       size={'xl'}
                       name={userData ? userData.name : 'no name'}
                     />
@@ -76,9 +91,11 @@ function Profile() {
                       </Text>
                     </Box>
                   </HStack>
-                  <Text fontSize="xs" as="i" color="gray.400">
-                    You must submit your details to finish sign up
-                  </Text>
+                  {!userData && (
+                    <Text fontSize="xs" as="i" color="gray.400">
+                      You must submit your details to finish sign up
+                    </Text>
+                  )}
                 </>
                 <Box pb="4">
                   {userData && (
@@ -86,8 +103,11 @@ function Profile() {
                       variant="ghost"
                       colorScheme="blue"
                       rounded="full"
-                      size={'xs'}
-                      onClick={onOpen}
+                      size={'sm'}
+                      onClick={() => {
+                        setAction('EDIT');
+                        onOpen();
+                      }}
                     >
                       {' '}
                       Edit Profile{' '}
@@ -99,7 +119,10 @@ function Profile() {
                       colorScheme="blue"
                       rounded="full"
                       size={'sm'}
-                      onClick={onOpen}
+                      onClick={() => {
+                        setAction('ADD');
+                        onOpen();
+                      }}
                     >
                       {' '}
                       Finish creating account
@@ -109,11 +132,11 @@ function Profile() {
               </Stack>
             </WrapContent>
           </Box>
-          <ProfileData isAuth={isAuth} data={userData} />
-          <AdsSection data={userData} />
+          {/* <ProfileData isAuth={isAuth} data={userData} /> */}
+          <AdsSection data={{ ...userData, ads }} />
         </>
       )}
-      <UserDataModal isOpen={isOpen} onClose={onClose} />
+      <UserDataModal action={action} isOpen={isOpen} onClose={onClose} />
     </>
   );
 }

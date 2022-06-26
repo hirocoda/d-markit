@@ -5,6 +5,7 @@ import {
   Heading,
   HStack,
   IconButton,
+  Image,
   SimpleGrid,
   Text,
 } from '@chakra-ui/react';
@@ -14,19 +15,35 @@ import { FaAngleLeft } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import WrapContent from '../layout/WrapContent';
 import { Link } from 'react-router-dom';
-import { phonesData } from '../../data/fakedata';
 import AdCard from './AdCard';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { db } from '../../firebase';
+import emptyIcon from '../../assets/empty.png';
 
 function ProductPage() {
   const { category } = useParams();
-  const [items, setItems] = useState(null);
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  async function getProds() {
+    let arr = [];
+    const q = query(collection(db, 'ads'), where('category', '==', category));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach(doc => {
+      arr.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
+    setItems(arr);
+    console.log(arr);
+  }
 
   useEffect(() => {
     setTimeout(() => {
       switch (category) {
         case 'phones':
-          setItems(phonesData);
+          getProds();
           setLoading(false);
           break;
 
@@ -36,6 +53,7 @@ function ProductPage() {
           break;
       }
     }, 2500);
+    //eslint-disable-next-line
   }, [category]);
 
   return (
@@ -89,6 +107,7 @@ function ProductPage() {
             <Text>LOADING ...</Text>
           </Center>
         )}
+
         {!loading && items === null && (
           <Center py="10">
             <Text fontSize={'xl'} color="red.500">
@@ -101,6 +120,12 @@ function ProductPage() {
             items &&
             items.map((item, i) => <AdCard key={i} item={item} />)}
         </SimpleGrid>
+        {!loading && items.length === 0 && (
+          <Center flexDir="column" py="5">
+            <Image src={emptyIcon} alt="no items" w="200px" />
+            <Text fontSize="2xl">No ads for this category</Text>
+          </Center>
+        )}
       </WrapContent>
     </Box>
   );

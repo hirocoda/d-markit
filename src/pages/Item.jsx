@@ -18,10 +18,11 @@ import { FaAngleLeft } from 'react-icons/fa';
 import { Link, useParams } from 'react-router-dom';
 import WrapContent from '../components/layout/WrapContent';
 import { useData } from '../context/DataContext';
-import { phonesData } from '../data/fakedata';
 import SafetyAlert from '../components/Product/SafetyAlert';
 import PayNow from '../components/Product/PayNow';
 import ItemDetails from '../components/Product/ItemDetails';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const imagesArr = [
   'https://source.unsplash.com/random/400x400/?telephone',
@@ -38,17 +39,27 @@ function Item() {
   const { id } = useParams();
   const { activeItem } = useData();
 
-  const fetchItem = useCallback(() => {
-    let item = phonesData.filter(i => i.id === id)[0];
-    setItem(item);
-    setImages([item.image, ...imagesArr]);
+  const fetchItem = useCallback(async () => {
+    const docRef = doc(db, 'ads', id);
+    const docSnap = await getDoc(docRef);
 
-    setLoading(false);
+    if (docSnap.exists()) {
+      setItem({ ...docSnap.data(), id: docSnap.id });
+      setImages([docSnap.data().image, ...imagesArr]);
+      setLoading(false);
+    } else {
+      console.log('No such document!');
+      setItem(null);
+      setLoading(false);
+    }
   }, [id]);
 
   useEffect(() => {
+    console.log(activeItem);
     if (activeItem) {
       setItem(activeItem);
+      setImages([activeItem.image, ...imagesArr]);
+
       setLoading(false);
     } else {
       fetchItem();
@@ -75,7 +86,7 @@ function Item() {
           <HStack>
             <IconButton
               as={Link}
-              to={'/category/' + item.category}
+              to={item ? '/category/' + item.category : '/marketplace'}
               size="sm"
               variant="ghost"
               fontSize="24px"
@@ -87,7 +98,7 @@ function Item() {
               fontSize={['lg', 'xl', '2xl']}
               textTransform="capitalize"
             >
-              {item.category}
+              {item ? item.category : 'Marketplace'}
             </Heading>
           </HStack>
         </Box>
